@@ -1,0 +1,3 @@
+# Gold adversarial: todos deben abstenerse (pass_rate = abstención correcta).
+overall: 1.0
+suite.abstention: 1.0

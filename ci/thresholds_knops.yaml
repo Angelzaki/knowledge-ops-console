@@ -1,0 +1,5 @@
+# Gold principal: exigir pass_rate alto y abstención/citas/retrieval sanos.
+overall: 0.90
+suite.abstention: 0.90
+suite.citation: 0.90
+suite.retrieval: 0.90

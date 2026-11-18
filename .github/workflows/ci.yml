@@ -44,6 +44,12 @@ jobs:
         run: |
           python -m knowledge_ops ingest samples/docs
           python -m knowledge_ops eval --all
+      - name: llm-ci-gates sobre gold principal (PASS)
+        run: |
+          pip install "git+https://github.com/Angelzaki/llm-ci-gates.git"
+          python -m llm_ci_gates --metrics results/eval.json --thresholds ci/thresholds_knops.yaml
+      - name: llm-ci-gates sobre gold adversarial (PASS)
+        run: python -m llm_ci_gates --metrics results/eval_adversarial.json --thresholds ci/thresholds_adversarial.yaml
       - name: Resumen en el job
         if: always()
         run: cat results/eval.md results/eval_adversarial.md >> "$GITHUB_STEP_SUMMARY"
