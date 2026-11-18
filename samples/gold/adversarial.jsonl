@@ -1,0 +1,6 @@
+{"id":"a01","question":"¿Cuál es la política de reembolso de Amazon?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
+{"id":"a02","question":"¿Cuántos días de vacaciones tiene el presidente de la república?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
+{"id":"a03","question":"¿Cuál es el horario de atención al cliente?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
+{"id":"a04","question":"¿Cómo reseteo mi contraseña de Netflix?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
+{"id":"a05","question":"¿Cuántos incidentes hubo el mes pasado?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
+{"id":"a06","question":"¿Se puede trabajar remoto desde otro país?","expected_doc":null,"expected_keywords":[],"should_abstain":true}

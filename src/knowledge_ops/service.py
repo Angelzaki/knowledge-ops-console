@@ -42,10 +42,19 @@ def run_ask(settings: Settings, question: str, k: int = 4) -> Answer:
     return answer
 
 
-def write_reports(settings: Settings, report: dict[str, Any]) -> dict[str, str]:
+MAIN_GOLD_STEM = "questions"
+
+
+def report_basename(gold: str | Path) -> str:
+    """El gold principal conserva `eval`; los demás escriben `eval_<nombre>` y no pisan su reporte."""
+    stem = Path(gold).stem
+    return "eval" if stem == MAIN_GOLD_STEM else f"eval_{stem}"
+
+
+def write_reports(settings: Settings, report: dict[str, Any], name: str = "eval") -> dict[str, str]:
     settings.results_dir.mkdir(parents=True, exist_ok=True)
-    md = settings.results_dir / "eval.md"
-    js = settings.results_dir / "eval.json"
+    md = settings.results_dir / f"{name}.md"
+    js = settings.results_dir / f"{name}.json"
     md.write_text(render_markdown(report), encoding="utf-8")
     js.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     return {"md": str(md), "json": str(js)}
@@ -56,7 +65,7 @@ def run_eval_suite(settings: Settings, gold: str | Path, k: int = 4) -> dict[str
     index = LexicalIndex.load(settings.index_path)
     report = run_eval(index, Path(gold), k=k)
     Store(settings.db_path).record_eval(str(gold), k, report["metrics"], report["cases"])
-    report["outputs"] = write_reports(settings, report)
+    report["outputs"] = write_reports(settings, report, report_basename(gold))
     return report
 
 

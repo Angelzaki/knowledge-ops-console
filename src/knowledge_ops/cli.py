@@ -10,6 +10,7 @@ from .models import Settings
 from . import service
 
 DEFAULT_GOLD = "samples/gold/questions.jsonl"
+ADVERSARIAL_GOLD = "samples/gold/adversarial.jsonl"
 DEFAULT_PORT = 8020
 
 
@@ -31,7 +32,8 @@ def build_parser() -> argparse.ArgumentParser:
     ask.add_argument("--json", action="store_true", dest="as_json")
 
     ev = sub.add_parser("eval", help="evalúa contra el gold set y escribe results/eval.md y .json")
-    ev.add_argument("--gold", default=DEFAULT_GOLD)
+    ev.add_argument("--gold", action="append", help=f"gold set (repetible; por defecto {DEFAULT_GOLD})")
+    ev.add_argument("--all", action="store_true", help="evalúa el gold principal y el adversarial por separado")
     ev.add_argument("-k", type=int, default=4)
 
     srv = sub.add_parser("serve", help="UI web local")
@@ -92,16 +94,28 @@ def main(argv: list[str] | None = None) -> int:
                 _print_answer(ans)
             return 0
         if args.cmd == "eval":
-            report = service.run_eval_suite(settings, Path(args.gold), k=args.k)
-            m = report["metrics"]
-            recall = m[f"recall@{m['k']}"]
-            print(
-                f"casos={m['cases']} recall@{m['k']}={recall:.0%} "
-                f"citation_hit={m['citation_hit']:.0%} "
-                f"abstención={m['abstention_correct']:.0%} pass={m['pass_rate']:.0%}"
-            )
-            print(f"reportes: {report['outputs']['md']} · {report['outputs']['json']}")
-            return 0 if m["pass_rate"] == 1.0 else 1
+            golds = list(args.gold or [])
+            if args.all:
+                golds += [g for g in (DEFAULT_GOLD, ADVERSARIAL_GOLD) if g not in golds]
+            golds = golds or [DEFAULT_GOLD]
+            # El gold principal va al final para que `status` siga mostrando su pass rate.
+            golds.sort(key=lambda g: Path(g).stem == service.MAIN_GOLD_STEM)
+            exit_code = 0
+            for gold in golds:
+                report = service.run_eval_suite(settings, Path(gold), k=args.k)
+                m = report["metrics"]
+                retrieval = ""
+                if m["answerable"]:
+                    recall = m[f"recall@{m['k']}"]
+                    retrieval = f"recall@{m['k']}={recall:.0%} citation_hit={m['citation_hit']:.0%} "
+                print(
+                    f"[{Path(gold).stem}] casos={m['cases']} {retrieval}"
+                    f"abstención={m['abstention_correct']:.0%} pass={m['pass_rate']:.0%}"
+                )
+                print(f"reportes: {report['outputs']['md']} · {report['outputs']['json']}")
+                if m["pass_rate"] != 1.0:
+                    exit_code = 1
+            return exit_code
         if args.cmd == "serve":
             import uvicorn
             from .web import create_app

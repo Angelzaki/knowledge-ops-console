@@ -9,3 +9,5 @@ data/
 results/*
 !results/eval.md
 !results/eval.json
+!results/eval_adversarial.md
+!results/eval_adversarial.json

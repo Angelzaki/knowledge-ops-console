@@ -1,0 +1,131 @@
+{
+  "gold": "samples/gold/adversarial.jsonl",
+  "metrics": {
+    "cases": 6,
+    "answerable": 0,
+    "unanswerable": 6,
+    "k": 4,
+    "recall@4": 0.0,
+    "citation_hit": 0.0,
+    "keyword_score": 0.0,
+    "abstention_correct": 1.0,
+    "false_abstain_rate": 0.0,
+    "false_answer_rate": 0.0,
+    "pass_rate": 1.0
+  },
+  "cases": [
+    {
+      "id": "a01",
+      "question": "¿Cuál es la política de reembolso de Amazon?",
+      "expected_doc": null,
+      "should_abstain": true,
+      "abstained": true,
+      "confidence": 0.4011,
+      "retrieved_docs": [
+        "politica_accesos.txt",
+        "politica_vacaciones_remoto.txt",
+        "sop_reembolsos.txt"
+      ],
+      "cited_docs": [],
+      "recall_hit": true,
+      "citation_hit": true,
+      "keyword_score": 1.0,
+      "abstention_ok": true,
+      "passed": true,
+      "answer": "No hay evidencia suficiente en los documentos indexados. Escale a una persona."
+    },
+    {
+      "id": "a02",
+      "question": "¿Cuántos días de vacaciones tiene el presidente de la república?",
+      "expected_doc": null,
+      "should_abstain": true,
+      "abstained": true,
+      "confidence": 0.4748,
+      "retrieved_docs": [
+        "politica_vacaciones_remoto.txt"
+      ],
+      "cited_docs": [],
+      "recall_hit": true,
+      "citation_hit": true,
+      "keyword_score": 1.0,
+      "abstention_ok": true,
+      "passed": true,
+      "answer": "No hay evidencia suficiente en los documentos indexados. Escale a una persona."
+    },
+    {
+      "id": "a03",
+      "question": "¿Cuál es el horario de atención al cliente?",
+      "expected_doc": null,
+      "should_abstain": true,
+      "abstained": true,
+      "confidence": 0.2901,
+      "retrieved_docs": [
+        "sop_reembolsos.txt",
+        "sop_incidentes.txt"
+      ],
+      "cited_docs": [],
+      "recall_hit": true,
+      "citation_hit": true,
+      "keyword_score": 1.0,
+      "abstention_ok": true,
+      "passed": true,
+      "answer": "No hay evidencia suficiente en los documentos indexados. Escale a una persona."
+    },
+    {
+      "id": "a04",
+      "question": "¿Cómo reseteo mi contraseña de Netflix?",
+      "expected_doc": null,
+      "should_abstain": true,
+      "abstained": true,
+      "confidence": 0.3456,
+      "retrieved_docs": [
+        "politica_accesos.txt"
+      ],
+      "cited_docs": [],
+      "recall_hit": true,
+      "citation_hit": true,
+      "keyword_score": 1.0,
+      "abstention_ok": true,
+      "passed": true,
+      "answer": "No hay evidencia suficiente en los documentos indexados. Escale a una persona."
+    },
+    {
+      "id": "a05",
+      "question": "¿Cuántos incidentes hubo el mes pasado?",
+      "expected_doc": null,
+      "should_abstain": true,
+      "abstained": true,
+      "confidence": 0.2826,
+      "retrieved_docs": [
+        "sop_reembolsos.txt",
+        "politica_vacaciones_remoto.txt",
+        "sop_incidentes.txt"
+      ],
+      "cited_docs": [],
+      "recall_hit": true,
+      "citation_hit": true,
+      "keyword_score": 1.0,
+      "abstention_ok": true,
+      "passed": true,
+      "answer": "No hay evidencia suficiente en los documentos indexados. Escale a una persona."
+    },
+    {
+      "id": "a06",
+      "question": "¿Se puede trabajar remoto desde otro país?",
+      "expected_doc": null,
+      "should_abstain": true,
+      "abstained": true,
+      "confidence": 0.475,
+      "retrieved_docs": [
+        "politica_vacaciones_remoto.txt"
+      ],
+      "cited_docs": [],
+      "recall_hit": true,
+      "citation_hit": true,
+      "keyword_score": 1.0,
+      "abstention_ok": true,
+      "passed": true,
+      "answer": "No hay evidencia suficiente en los documentos indexados. Escale a una persona."
+    }
+  ]
+}

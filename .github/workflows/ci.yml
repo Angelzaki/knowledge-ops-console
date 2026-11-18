@@ -40,13 +40,13 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -e .
-      - name: Ingesta y evaluación del gold set
+      - name: Ingesta y evaluación (gold principal y adversarial)
         run: |
           python -m knowledge_ops ingest samples/docs
-          python -m knowledge_ops eval
+          python -m knowledge_ops eval --all
       - name: Resumen en el job
         if: always()
-        run: cat results/eval.md >> "$GITHUB_STEP_SUMMARY"
+        run: cat results/eval.md results/eval_adversarial.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

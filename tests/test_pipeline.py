@@ -15,6 +15,7 @@ from knowledge_ops.store import Store
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "samples" / "docs"
 GOLD = ROOT / "samples" / "gold" / "questions.jsonl"
+ADVERSARIAL = ROOT / "samples" / "gold" / "adversarial.jsonl"
 
 
 @pytest.fixture()
@@ -147,3 +148,49 @@ def test_web_flow(settings: Settings):
     assert ev["metrics"]["pass_rate"] >= 0.9
     assert len(client.get("/api/history").json()) == 1
     assert client.get("/api/status").json()["counts"]["eval_runs"] == 1
+
+
+def test_adversarial_gold_abstains_at_default_threshold(ingested: Settings):
+    report = service.run_eval_suite(ingested, ADVERSARIAL, k=4)
+    m = report["metrics"]
+    assert m["cases"] == 6 and m["unanswerable"] == 6
+    assert m["abstention_correct"] == 1.0
+    assert m["false_answer_rate"] == 0.0
+    assert m["pass_rate"] == 1.0
+    assert Path(report["outputs"]["md"]).name == "eval_adversarial.md"
+    assert Path(report["outputs"]["json"]).exists()
+
+
+def test_adversarial_gold_discriminates_loose_coverage(ingested: Settings, monkeypatch):
+    from knowledge_ops import answer as answer_mod
+    from knowledge_ops import eval_runner
+
+    original = answer_mod.answer_question
+    monkeypatch.setattr(
+        eval_runner,
+        "answer_question",
+        lambda index, q, k=4: original(index, q, k=k, min_coverage=0.30),
+    )
+    index = LexicalIndex.load(ingested.index_path)
+    loose = eval_runner.run_eval(index, ADVERSARIAL, k=4)["metrics"]
+    assert loose["false_answer_rate"] > 0.0
+    assert loose["pass_rate"] < 1.0
+
+
+def test_eval_adversarial_does_not_overwrite_main_report(ingested: Settings):
+    service.run_eval_suite(ingested, GOLD, k=4)
+    service.run_eval_suite(ingested, ADVERSARIAL, k=4)
+    main_report = json.loads((ingested.results_dir / "eval.json").read_text(encoding="utf-8"))
+    assert main_report["metrics"]["cases"] == 13
+    assert (ingested.results_dir / "eval_adversarial.json").exists()
+
+
+def test_cli_eval_all_reports_both_golds(tmp_path: Path, capsys, monkeypatch):
+    monkeypatch.chdir(ROOT)
+    home = str(tmp_path)
+    assert main(["--home", home, "ingest", str(DOCS)]) == 0
+    assert main(["--home", home, "eval", "--all"]) == 0
+    out = capsys.readouterr().out
+    assert "[questions] casos=13" in out and "pass=100%" in out
+    assert "[adversarial] casos=6" in out
+    assert service.status(Settings.from_env(tmp_path))["kpis"]["gold_accuracy"] == 1.0

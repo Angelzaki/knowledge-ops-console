@@ -113,6 +113,10 @@ def run_eval(index: LexicalIndex, gold_path: Path, k: int = 4) -> dict[str, Any]
 def render_markdown(report: dict[str, Any]) -> str:
     m = report["metrics"]
     k = m["k"]
+
+    def answerable_metric(value: float) -> str:
+        return f"{value:.2%}" if m["answerable"] else "n/a"
+
     lines = [
         "# Evaluación del gold set",
         "",
@@ -120,9 +124,9 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         "| Métrica | Valor |",
         "|---|---|",
-        f"| recall@{k} | {m[f'recall@{k}']:.2%} |",
-        f"| citation hit | {m['citation_hit']:.2%} |",
-        f"| keyword score | {m['keyword_score']:.2%} |",
+        f"| recall@{k} | {answerable_metric(m[f'recall@{k}'])} |",
+        f"| citation hit | {answerable_metric(m['citation_hit'])} |",
+        f"| keyword score | {answerable_metric(m['keyword_score'])} |",
         f"| abstención correcta | {m['abstention_correct']:.2%} |",
         f"| falsa abstención | {m['false_abstain_rate']:.2%} |",
         f"| falsa respuesta | {m['false_answer_rate']:.2%} |",

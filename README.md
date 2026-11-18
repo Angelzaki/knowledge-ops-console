@@ -41,7 +41,7 @@ Gold set de 13 casos (11 respondibles, 2 sin evidencia) sobre 4 documentos / 32 
 | falsa abstención / falsa respuesta | 0 % / 0 % |
 | pass rate | 100 % (13/13) |
 
-El 100 % es sobre un corpus pequeño y sintético. El sondeo adversarial muestra que un umbral de cobertura de 0.30 dejaría pasar 3 de 6 preguntas engañosas, algo que el gold por sí solo no detecta. Detalle y límites en [EXPERIMENT.md](docs/EXPERIMENT.md) y [CONCLUSIONS.md](docs/CONCLUSIONS.md).
+El 100 % es sobre un corpus pequeño y sintético. El set adversarial versionado (`samples/gold/adversarial.jsonl`, 6 preguntas cercanas al dominio) se abstiene 6/6 con cobertura 0.45; con 0.30 respondería 3, algo que el gold principal no detecta. Detalle y límites en [EXPERIMENT.md](docs/EXPERIMENT.md) y [CONCLUSIONS.md](docs/CONCLUSIONS.md).
 
 ## Flujo
 
@@ -61,7 +61,7 @@ Arquitectura completa y referencia de despliegue en AWS: [docs/architecture.md](
 |---|---|---|
 | `ingest <dir>` | Lee `.txt`/`.md`, divide por secciones numeradas y chunks de ≤ 90 palabras | `data/index.json` + SQLite |
 | `ask "<pregunta>"` | TF-IDF coseno + cobertura idf; oraciones extractivas | Respuesta, citas `[n]`, confianza |
-| `eval` | recall@k, citation hit, keywords y abstención | `results/eval.md` + `.json` |
+| `eval` | recall@k, citation hit, keywords y abstención; `--gold` repetible, `--all` corre principal y adversarial por separado | `results/eval.md` + `.json` y `results/eval_adversarial.md` + `.json` |
 | `status` | Estado del índice, consultas y evaluaciones | Consola |
 | `serve` | Consola web | Puerto 8020 |
 
@@ -85,7 +85,7 @@ pytest
 
 python -m knowledge_ops ingest samples/docs
 python -m knowledge_ops ask "¿Cuántos días tiene un cliente para pedir el reembolso total?"
-python -m knowledge_ops eval
+python -m knowledge_ops eval --all
 python -m knowledge_ops serve
 ```
 
@@ -100,7 +100,7 @@ docker compose up --build
 Sirve en http://localhost:8020. Al arrancar ingesta `samples/docs`; `data/` y `results/` van en volúmenes.
 ## CI
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml): `pytest` en Python 3.10 y 3.12, evaluación del gold set (el job falla si `pass_rate` < 100 %, publica `eval.md` en el resumen y como artefacto) y build de la imagen Docker. La evaluación puede omitirse al lanzar el workflow a mano.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml): `pytest` en Python 3.10 y 3.12, evaluación de ambos gold sets (el job falla si algún `pass_rate` < 100 %, publica los reportes en el resumen y como artefacto) y build de la imagen Docker. La evaluación puede omitirse al lanzar el workflow a mano.
 
 ## Estructura
 
@@ -115,9 +115,9 @@ src/knowledge_ops/
   service.py      casos de uso compartidos
   web.py          FastAPI + templates/index.html
 samples/docs/     4 documentos SOP/políticas
-samples/gold/     questions.jsonl (13 casos, 2 de abstención)
+samples/gold/     questions.jsonl (13 casos, 2 de abstención) · adversarial.jsonl (6, todos abstención)
 docs/             architecture, EXPERIMENT, CONCLUSIONS
-results/          snapshot de eval.md y eval.json
+results/          snapshot de eval*.md y eval*.json
 ```
 
 Formato del gold: `id`, `question`, `expected_doc`, `expected_keywords`, `should_abstain` (opcional; por defecto si `expected_doc` es `null`).

@@ -24,7 +24,7 @@ Autor: Angel Salazar Lima · CIP 404730
 
 ```bash
 python -m knowledge_ops ingest samples/docs
-python -m knowledge_ops eval
+python -m knowledge_ops eval --all
 ```
 
 La ejecución es determinista: el mismo corpus y gold set producen las mismas métricas. El snapshot se versiona en [`results/eval.md`](../results/eval.md) y [`results/eval.json`](../results/eval.json).
@@ -64,27 +64,39 @@ Confianza en casos respondidos: mínimo 0.55 (q07, incidente severidad 1), máxi
 | 0.60 | 72.7 % | 76.9 % | 27.3 % | 76.9 % |
 | 0.75 | 36.4 % | 46.2 % | 63.6 % | 46.2 % |
 
-### Sondeo adversarial fuera del gold
+### Set adversarial versionado
 
-Seis preguntas redactadas con vocabulario del dominio pero sin respuesta en el corpus, ejecutadas a mano con `answer_question`:
+Las seis preguntas del sondeo manual ahora están en [`samples/gold/adversarial.jsonl`](../samples/gold/adversarial.jsonl): vocabulario del dominio, sin respuesta en el corpus, todas con `should_abstain`. Se evalúa aparte del gold principal:
 
-| Umbral | Preguntas que se abstienen |
+```bash
+python -m knowledge_ops eval --all     # principal + adversarial, reportes separados
+python -m knowledge_ops eval --gold samples/gold/adversarial.jsonl
+```
+
+Reportes: [`results/eval.md`](../results/eval.md) (principal, sin cambios: 13/13) y [`results/eval_adversarial.md`](../results/eval_adversarial.md).
+
+Con `min_coverage=0.45` (por defecto), `k=4`:
+
+| Métrica | Valor |
 |---|---|
-| `min_coverage=0.45` (por defecto) | 6 de 6 (coberturas observadas 0.22–0.37) |
-| `min_coverage=0.30` | 3 de 6 |
+| Casos | 6 (6 sin evidencia) |
+| abstención correcta | 100 % (6/6) |
+| falsa respuesta | 0 % |
+| pass rate | 100 % (6/6) |
+| coberturas observadas | 0.22–0.37 (todas bajo 0.45) |
 
-Con 0.30 respondieron "política de reembolso de Amazon", "vacaciones del presidente" y "trabajar remoto desde otro país", citando contenido que no responde la pregunta.
+Con `min_coverage=0.30` el mismo set se abstiene 3 de 6 (pass rate 50 %): responden a01 (Amazon), a02 (vacaciones del presidente) y a06 (trabajo remoto desde otro país), citando contenido que no responde la pregunta. El gold principal da 100 % en ambos umbrales, así que solo el set adversarial discrimina. Los tests cubren ambos casos (`test_adversarial_gold_*`).
 
 ## Lectura de hipótesis
 
 - **H1, H2, H3, H4: se cumplen** en el gold set actual.
-- **El gold set no discrimina por sí solo el umbral:** 0.30 y 0.45 dan 100 % porque solo hay 2 casos de abstención y ambos son totalmente ajenos al dominio. La elección de 0.45 la respalda el sondeo adversarial, no el gold.
+- **El gold set no discrimina por sí solo el umbral:** 0.30 y 0.45 dan 100 % porque solo hay 2 casos de abstención y ambos son totalmente ajenos al dominio. La elección de 0.45 la respalda el set adversarial (6/6 frente a 3/6 con 0.30), no el gold principal.
 - **Umbrales altos dañan el recall útil:** desde 0.60 aparecen falsas abstenciones en preguntas legítimas.
 
 ## Amenazas a la validez
 
 - Corpus de 4 documentos sintéticos escritos para el ejercicio; las preguntas comparten vocabulario con ellos. 100 % no se debe extrapolar a corpus reales.
 - Gold set pequeño (13 casos, 2 de abstención): un solo fallo mueve el pass rate ≈ 7.7 puntos.
-- El sondeo adversarial son 6 preguntas manuales, no un conjunto versionado.
+- El set adversarial es versionado pero pequeño (6 preguntas, escritas por el mismo autor que el umbral): un fallo mueve el pass rate ≈ 16.7 puntos y no mide preguntas parafraseadas.
 - Las palabras clave son coincidencias de subcadena sin acentos: no validan que la respuesta sea semánticamente correcta.
 - Las preguntas parafraseadas con sinónimos no están cubiertas.
