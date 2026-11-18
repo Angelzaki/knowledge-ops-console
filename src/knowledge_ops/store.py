@@ -188,6 +188,39 @@ class Store:
             out.append(d)
         return out
 
+    def query_stats(self) -> dict[str, Any]:
+        with self._conn() as c:
+            row = c.execute(
+                "SELECT COUNT(*) AS n, COALESCE(SUM(abstained),0) AS ab,"
+                " COALESCE(AVG(latency_ms),0) AS lat FROM queries"
+            ).fetchone()
+        return {
+            "asks": row["n"],
+            "abstentions": int(row["ab"]),
+            "avg_latency_ms": round(row["lat"], 1),
+        }
+
+    def activity(self, limit: int = 15) -> list[dict[str, Any]]:
+        sql = """
+            SELECT ts, id, 'ingesta' AS kind,
+                   'Ingesta #' || id || ': ' || docs || ' docs, ' || chunks || ' chunks' AS detail,
+                   'ok' AS status
+              FROM ingest_runs
+            UNION ALL
+            SELECT ts, id, 'consulta' AS kind, question AS detail,
+                   CASE WHEN abstained = 1 THEN 'abstencion' ELSE 'ok' END AS status
+              FROM queries
+            UNION ALL
+            SELECT ts, id, 'evaluacion' AS kind,
+                   'Evaluación #' || id || ' (k=' || k || ')' AS detail, 'ok' AS status
+              FROM eval_runs
+            ORDER BY ts DESC, id DESC
+            LIMIT ?
+        """
+        with self._conn() as c:
+            rows = c.execute(sql, (limit,)).fetchall()
+        return [{k: r[k] for k in ("ts", "kind", "detail", "status")} for r in rows]
+
     def counts(self) -> dict[str, int]:
         with self._conn() as c:
             return {

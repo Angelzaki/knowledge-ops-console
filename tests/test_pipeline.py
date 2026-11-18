@@ -96,6 +96,25 @@ def test_eval_happy_path_writes_reports(ingested: Settings):
     assert Store(ingested.db_path).latest_eval()["metrics"]["cases"] == m["cases"]
 
 
+def test_status_kpis_and_activity(settings: Settings):
+    empty = service.status(settings)["kpis"]
+    assert empty["docs_indexed"] == 0 and empty["gold_accuracy"] is None and empty["asks"] == 0
+
+    service.run_ingest(settings, DOCS)
+    service.run_ask(settings, "¿Cuál es la longitud mínima de una contraseña?")
+    service.run_ask(settings, "¿Quién ganó el mundial de fútbol de 2018?")
+    service.run_eval_suite(settings, GOLD, k=4)
+
+    st = service.status(settings)
+    k = st["kpis"]
+    assert k["docs_indexed"] == 4
+    assert k["asks"] == 2 and k["abstentions"] == 1
+    assert k["gold_accuracy"] == 1.0
+    kinds = {a["kind"] for a in st["activity"]}
+    assert kinds == {"ingesta", "consulta", "evaluacion"}
+    assert any(a["status"] == "abstencion" for a in st["activity"])
+
+
 def test_cli_end_to_end(tmp_path: Path, capsys):
     home = str(tmp_path)
     assert main(["--home", home, "ingest", str(DOCS)]) == 0

@@ -104,7 +104,7 @@ def run_eval(index: LexicalIndex, gold_path: Path, k: int = 4) -> dict[str, Any]
     cases = load_gold(gold_path)
     results = [evaluate_case(index, c, k) for c in cases]
     return {
-        "gold": str(gold_path),
+        "gold": gold_path.as_posix(),
         "metrics": compute_metrics(results, k),
         "cases": [r.to_dict() for r in results],
     }

@@ -6,4 +6,6 @@ __pycache__/
 build/
 dist/
 data/
-results/
+results/*
+!results/eval.md
+!results/eval.json

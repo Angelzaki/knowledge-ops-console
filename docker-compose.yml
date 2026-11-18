@@ -1,0 +1,15 @@
+services:
+  knowledge-ops:
+    build: .
+    image: knowledge-ops-console:latest
+    container_name: knowledge-ops-console
+    ports:
+      - "8020:8020"
+    volumes:
+      - knops-data:/app/data
+      - knops-results:/app/results
+    restart: unless-stopped
+
+volumes:
+  knops-data:
+  knops-results:

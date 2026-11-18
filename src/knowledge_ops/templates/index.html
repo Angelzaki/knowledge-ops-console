@@ -6,109 +6,209 @@
   <title>Knowledge Ops Console</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background: #f4f5f7; }
-    .navbar { background: #1f2933; }
-    .metric { font-size: 1.6rem; font-weight: 600; }
-    .snippet { font-size: .85rem; color: #52606d; border-left: 3px solid #9aa5b1; padding-left: .6rem; }
-    .mono { font-family: ui-monospace, Consolas, monospace; font-size: .85rem; }
+    :root {
+      --ko-sidebar: #0f1f33;
+      --ko-sidebar-hover: #17304d;
+      --ko-sidebar-active: #1e3d62;
+      --ko-accent: #2f6fa7;
+      --ko-accent-dark: #25587f;
+      --ko-bg: #eef1f5;
+      --ko-border: #d5dbe3;
+      --ko-text: #1c2733;
+      --ko-muted: #5b6b7c;
+      --ko-ok: #2b7a4b;
+      --ko-warn: #a8660c;
+      --ko-danger: #a63232;
+      --bs-primary: var(--ko-accent);
+      --bs-primary-rgb: 47, 111, 167;
+      --bs-link-color: var(--ko-accent);
+      --bs-link-hover-color: var(--ko-accent-dark);
+      --bs-body-color: var(--ko-text);
+      --bs-border-color: var(--ko-border);
+      --bs-border-radius: .25rem;
+    }
+    body { background: var(--ko-bg); color: var(--ko-text); font-size: .92rem; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 232px; flex: 0 0 232px; background: var(--ko-sidebar); color: #c5d1de; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .brand { padding: 1.1rem 1.1rem .9rem; border-bottom: 1px solid #1d3550; }
+    .brand strong { display: block; color: #fff; font-size: 1rem; letter-spacing: .01em; }
+    .brand span { font-size: .75rem; color: #8fa3b8; }
+    .sidebar nav { padding: .6rem 0; flex: 1; }
+    .nav-item-ko { display: flex; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-left: 3px solid transparent; color: #c5d1de; padding: .6rem 1.1rem; font-size: .9rem; }
+    .nav-item-ko:hover { background: var(--ko-sidebar-hover); color: #fff; }
+    .nav-item-ko.active { background: var(--ko-sidebar-active); border-left-color: #6fa8d6; color: #fff; }
+    .side-foot { padding: .9rem 1.1rem; border-top: 1px solid #1d3550; font-size: .75rem; color: #8fa3b8; }
+    .content { flex: 1; min-width: 0; }
+    .topbar { background: #fff; border-bottom: 1px solid var(--ko-border); padding: .7rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .topbar h1 { font-size: 1.05rem; margin: 0; font-weight: 600; }
+    .topbar .meta { font-size: .8rem; color: var(--ko-muted); }
+    .page { padding: 1.25rem 1.5rem 2rem; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .card { border: 1px solid var(--ko-border); border-radius: 4px; box-shadow: none; }
+    .card-header { background: #f7f9fb; border-bottom: 1px solid var(--ko-border); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .03em; color: var(--ko-muted); }
+    .kpi { border-top: 3px solid var(--ko-accent); }
+    .kpi .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ko-muted); }
+    .kpi .value { font-size: 1.9rem; font-weight: 600; line-height: 1.15; }
+    .kpi .sub { font-size: .78rem; color: var(--ko-muted); }
+    .kpi.warn { border-top-color: var(--ko-warn); }
+    .kpi.ok { border-top-color: var(--ko-ok); }
+    .btn-primary { --bs-btn-bg: var(--ko-accent); --bs-btn-border-color: var(--ko-accent); --bs-btn-hover-bg: var(--ko-accent-dark); --bs-btn-hover-border-color: var(--ko-accent-dark); --bs-btn-active-bg: var(--ko-accent-dark); --bs-btn-active-border-color: var(--ko-accent-dark); --bs-btn-disabled-bg: var(--ko-accent); --bs-btn-disabled-border-color: var(--ko-accent); }
+    .btn-outline-secondary { --bs-btn-color: var(--ko-muted); --bs-btn-border-color: var(--ko-border); }
+    .form-control:focus { border-color: var(--ko-accent); box-shadow: 0 0 0 .15rem rgba(47,111,167,.2); }
+    .table { --bs-table-bg: transparent; }
+    .table thead th { font-size: .74rem; text-transform: uppercase; letter-spacing: .03em; color: var(--ko-muted); border-bottom-color: var(--ko-border); white-space: nowrap; }
+    .snippet { font-size: .85rem; color: var(--ko-muted); border-left: 3px solid #9fb0c2; padding-left: .6rem; }
+    .mono { font-family: ui-monospace, Consolas, monospace; font-size: .82rem; }
     td.q { max-width: 340px; }
+    .tag { display: inline-block; padding: .12rem .5rem; border-radius: 3px; font-size: .74rem; font-weight: 600; letter-spacing: .02em; }
+    .tag-ok { background: #e1f0e7; color: var(--ko-ok); }
+    .tag-warn { background: #f8ecd6; color: var(--ko-warn); }
+    .tag-danger { background: #f5dede; color: var(--ko-danger); }
+    .tag-info { background: #e0ebf5; color: var(--ko-accent-dark); }
+    .feed { list-style: none; margin: 0; padding: 0; }
+    .feed li { display: flex; gap: .75rem; align-items: baseline; padding: .55rem 1rem; border-bottom: 1px solid #e6eaef; }
+    .feed li:last-child { border-bottom: 0; }
+    .feed .when { color: var(--ko-muted); font-size: .76rem; white-space: nowrap; min-width: 8.2rem; }
+    .feed .what { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    @media (max-width: 860px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; flex: none; height: auto; position: static; }
+      .sidebar nav { display: flex; flex-wrap: wrap; padding: 0; }
+      .nav-item-ko { width: auto; border-left: 0; border-bottom: 3px solid transparent; }
+      .nav-item-ko.active { border-bottom-color: #6fa8d6; }
+      .side-foot { display: none; }
+    }
   </style>
 </head>
 <body>
-<nav class="navbar navbar-dark mb-3">
-  <div class="container-xl">
-    <span class="navbar-brand mb-0 h1">Knowledge Ops Console</span>
-    <span class="navbar-text small" id="hdr">sin índice</span>
-  </div>
-</nav>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><strong>Knowledge Ops Console</strong><span>Operaciones de conocimiento</span></div>
+    <nav id="menu">
+      <button class="nav-item-ko active" data-view="v-overview">Resumen</button>
+      <button class="nav-item-ko" data-view="v-ingest">Ingesta</button>
+      <button class="nav-item-ko" data-view="v-ask">Consulta</button>
+      <button class="nav-item-ko" data-view="v-eval">Evaluación</button>
+      <button class="nav-item-ko" data-view="v-history">Historial</button>
+    </nav>
+    <div class="side-foot">Angel Salazar Lima<br>CIP 404730</div>
+  </aside>
 
-<main class="container-xl">
-  <ul class="nav nav-tabs mb-3" id="tabs" role="tablist">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#t-ingest" type="button">Ingesta</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-ask" type="button">Preguntar</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-eval" type="button">Evaluación</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-history" type="button">Historial</button></li>
-  </ul>
+  <div class="content">
+    <header class="topbar">
+      <h1 id="view-title">Resumen</h1>
+      <span class="meta" id="hdr">sin índice</span>
+    </header>
 
-  <div class="tab-content">
-    <section class="tab-pane fade show active" id="t-ingest">
-      <div class="row g-3">
-        <div class="col-lg-5">
-          <div class="card"><div class="card-body">
-            <h2 class="h6">Ingestar directorio</h2>
-            <div class="input-group mb-2">
-              <input id="ingest-path" class="form-control mono" value="samples/docs">
-              <button class="btn btn-dark" id="btn-ingest">Ingestar</button>
+    <main class="page">
+      <section class="view active" id="v-overview">
+        <div class="row g-3 mb-3" id="kpis"></div>
+        <div class="row g-3">
+          <div class="col-lg-7">
+            <div class="card h-100">
+              <div class="card-header">Actividad reciente</div>
+              <ul class="feed" id="activity"></ul>
             </div>
-            <div id="ingest-msg" class="small"></div>
-          </div></div>
-          <div class="card mt-3"><div class="card-body">
-            <h2 class="h6">Estado</h2>
-            <dl class="row small mb-0" id="status-dl"></dl>
-          </div></div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card h-100">
+              <div class="card-header">Estado del sistema</div>
+              <div class="card-body"><dl class="row small mb-0" id="status-dl"></dl></div>
+            </div>
+          </div>
         </div>
-        <div class="col-lg-7">
-          <div class="card"><div class="card-body">
-            <h2 class="h6">Documentos de la última ingesta</h2>
-            <table class="table table-sm small">
-              <thead><tr><th>Documento</th><th class="text-end">Palabras</th><th class="text-end">Chunks</th><th>SHA-256</th></tr></thead>
-              <tbody id="docs-body"></tbody>
+      </section>
+
+      <section class="view" id="v-ingest">
+        <div class="row g-3">
+          <div class="col-lg-5">
+            <div class="card">
+              <div class="card-header">Ingestar directorio</div>
+              <div class="card-body">
+                <div class="input-group mb-2">
+                  <input id="ingest-path" class="form-control mono" value="samples/docs">
+                  <button class="btn btn-primary" id="btn-ingest">Ingestar</button>
+                </div>
+                <div id="ingest-msg" class="small"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="card mb-3">
+              <div class="card-header">Documentos de la última ingesta</div>
+              <div class="card-body pt-2">
+                <table class="table table-sm small mb-0">
+                  <thead><tr><th>Documento</th><th class="text-end">Palabras</th><th class="text-end">Chunks</th><th>SHA-256</th></tr></thead>
+                  <tbody id="docs-body"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">Corridas de ingesta</div>
+              <div class="card-body pt-2">
+                <table class="table table-sm small mb-0">
+                  <thead><tr><th>#</th><th>Fecha</th><th>Origen</th><th class="text-end">Docs</th><th class="text-end">Chunks</th><th class="text-end">ms</th></tr></thead>
+                  <tbody id="runs-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="v-ask">
+        <div class="card mb-3"><div class="card-body">
+          <form id="ask-form" class="row g-2">
+            <div class="col-md-9"><input id="q" class="form-control" placeholder="Pregunta sobre los documentos indexados" required minlength="2"></div>
+            <div class="col-md-1"><input id="k" type="number" min="1" max="10" value="4" class="form-control" title="k"></div>
+            <div class="col-md-2 d-grid"><button class="btn btn-primary">Consultar</button></div>
+          </form>
+        </div></div>
+        <div id="answer"></div>
+      </section>
+
+      <section class="view" id="v-eval">
+        <div class="card mb-3"><div class="card-body">
+          <div class="input-group">
+            <input id="gold" class="form-control mono" value="samples/gold/questions.jsonl">
+            <button class="btn btn-primary" id="btn-eval">Ejecutar evaluación</button>
+          </div>
+          <div id="eval-msg" class="small mt-2"></div>
+        </div></div>
+        <div id="eval-metrics" class="row g-2 mb-3"></div>
+        <div class="card"><div class="card-body">
+          <table class="table table-sm small align-middle mb-0">
+            <thead><tr><th>ID</th><th>Pregunta</th><th>Resultado</th><th>Abstuvo</th><th>Confianza</th><th>Doc esperado</th><th>Citado</th></tr></thead>
+            <tbody id="eval-body"></tbody>
+          </table>
+        </div></div>
+      </section>
+
+      <section class="view" id="v-history">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Consultas registradas</span>
+            <button class="btn btn-sm btn-outline-secondary" id="btn-history">Actualizar</button>
+          </div>
+          <div class="card-body pt-2">
+            <table class="table table-sm small align-middle mb-0">
+              <thead><tr><th>#</th><th>Fecha</th><th>Pregunta</th><th>Estado</th><th>Confianza</th><th>Doc principal</th><th class="text-end">ms</th></tr></thead>
+              <tbody id="history-body"></tbody>
             </table>
-            <h2 class="h6 mt-3">Corridas de ingesta</h2>
-            <table class="table table-sm small">
-              <thead><tr><th>#</th><th>Fecha</th><th>Origen</th><th class="text-end">Docs</th><th class="text-end">Chunks</th><th class="text-end">ms</th></tr></thead>
-              <tbody id="runs-body"></tbody>
-            </table>
-          </div></div>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <section class="tab-pane fade" id="t-ask">
-      <div class="card mb-3"><div class="card-body">
-        <form id="ask-form" class="row g-2">
-          <div class="col-md-9"><input id="q" class="form-control" placeholder="Escriba su pregunta sobre los documentos indexados" required minlength="2"></div>
-          <div class="col-md-1"><input id="k" type="number" min="1" max="10" value="4" class="form-control" title="k"></div>
-          <div class="col-md-2 d-grid"><button class="btn btn-dark">Preguntar</button></div>
-        </form>
-      </div></div>
-      <div id="answer"></div>
-    </section>
-
-    <section class="tab-pane fade" id="t-eval">
-      <div class="card mb-3"><div class="card-body">
-        <div class="input-group">
-          <input id="gold" class="form-control mono" value="samples/gold/questions.jsonl">
-          <button class="btn btn-dark" id="btn-eval">Ejecutar evaluación</button>
-        </div>
-        <div id="eval-msg" class="small mt-2"></div>
-      </div></div>
-      <div id="eval-metrics" class="row g-2 mb-3"></div>
-      <div class="card"><div class="card-body">
-        <table class="table table-sm small align-middle">
-          <thead><tr><th>ID</th><th>Pregunta</th><th>Resultado</th><th>Abstuvo</th><th>Confianza</th><th>Doc esperado</th><th>Citado</th></tr></thead>
-          <tbody id="eval-body"></tbody>
-        </table>
-      </div></div>
-    </section>
-
-    <section class="tab-pane fade" id="t-history">
-      <div class="card"><div class="card-body">
-        <button class="btn btn-sm btn-outline-secondary mb-2" id="btn-history">Actualizar</button>
-        <table class="table table-sm small align-middle">
-          <thead><tr><th>#</th><th>Fecha</th><th>Pregunta</th><th>Estado</th><th>Confianza</th><th>Doc principal</th><th class="text-end">ms</th></tr></thead>
-          <tbody id="history-body"></tbody>
-        </table>
-      </div></div>
-    </section>
+      </section>
+    </main>
   </div>
-</main>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pct = (v) => (v * 100).toFixed(0) + "%";
+const TITLES = {"v-overview": "Resumen", "v-ingest": "Ingesta", "v-ask": "Consulta", "v-eval": "Evaluación", "v-history": "Historial"};
 
 async function api(url, body) {
   const opts = body ? {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)} : {};
@@ -118,22 +218,55 @@ async function api(url, body) {
   return data;
 }
 
-function badge(ok, yes, no) {
-  return `<span class="badge text-bg-${ok ? "success" : "danger"}">${ok ? yes : no}</span>`;
+function tag(kind, text) { return `<span class="tag tag-${kind}">${text}</span>`; }
+function passTag(ok) { return ok ? tag("ok", "OK") : tag("danger", "FALLA"); }
+function statusTag(abstained) { return abstained ? tag("warn", "Abstención") : tag("ok", "Respondida"); }
+
+function showView(id) {
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === id));
+  document.querySelectorAll(".nav-item-ko").forEach((b) => b.classList.toggle("active", b.dataset.view === id));
+  $("view-title").textContent = TITLES[id];
+  if (id === "v-history") loadHistory();
+  if (id === "v-eval") loadEval();
+  if (id === "v-overview" || id === "v-ingest") loadStatus().catch(() => {});
+}
+document.querySelectorAll(".nav-item-ko").forEach((b) => b.addEventListener("click", () => showView(b.dataset.view)));
+
+function kpiCard(label, value, sub, cls) {
+  return `<div class="col-6 col-xl-3"><div class="card kpi ${cls || ""}"><div class="card-body">
+    <div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></div></div></div>`;
+}
+
+function renderKpis(k) {
+  const acc = k.gold_accuracy;
+  const rate = k.asks ? ` · ${pct(k.abstentions / k.asks)} de las consultas` : "";
+  $("kpis").innerHTML =
+    kpiCard("Documentos indexados", k.docs_indexed, `${k.chunks_indexed} chunks`) +
+    kpiCard("Precisión gold set", acc === null ? "—" : pct(acc), acc === null ? "sin evaluación" : "pass rate última corrida", acc === null ? "" : (acc >= 0.9 ? "ok" : "warn")) +
+    kpiCard("Consultas", k.asks, `latencia media ${k.avg_latency_ms} ms`) +
+    kpiCard("Abstenciones", k.abstentions, `escaladas a una persona${rate}`, k.abstentions ? "warn" : "");
+}
+
+const KIND = {ingesta: "info", consulta: "info", evaluacion: "info"};
+function renderActivity(items) {
+  $("activity").innerHTML = items.length
+    ? items.map((a) => `<li><span class="when mono">${esc(a.ts.replace("T", " ").slice(0, 19))}</span>${tag(KIND[a.kind] || "info", esc(a.kind))}<span class="what">${esc(a.detail)}</span>${a.status === "abstencion" ? tag("warn", "Abstención") : ""}</li>`).join("")
+    : `<li class="text-muted">Sin actividad todavía. Ingeste documentos para comenzar.</li>`;
 }
 
 async function loadStatus() {
   const st = await api("/api/status");
-  $("hdr").textContent = st.index ? `${st.index.docs} docs · ${st.index.chunks} chunks` : "sin índice";
+  $("hdr").textContent = st.index ? `${st.index.docs} docs · ${st.index.chunks} chunks · ${st.index.terms} términos` : "sin índice";
+  renderKpis(st.kpis);
+  renderActivity(st.activity);
   const rows = [
     ["Índice", st.index ? `${st.index.terms} términos` : "no construido"],
     ["Construido", st.index ? st.index.built_at : "—"],
     ["Ingestas", st.counts.ingest_runs],
-    ["Consultas", st.counts.queries],
     ["Evaluaciones", st.counts.eval_runs],
     ["Home", st.root],
   ];
-  $("status-dl").innerHTML = rows.map(([a, b]) => `<dt class="col-4">${a}</dt><dd class="col-8 mono">${esc(b)}</dd>`).join("");
+  $("status-dl").innerHTML = rows.map(([a, b]) => `<dt class="col-4 text-muted fw-normal">${a}</dt><dd class="col-8 mono">${esc(b)}</dd>`).join("");
   const docs = (st.last_ingest && st.last_ingest.documents) || [];
   $("docs-body").innerHTML = docs.length
     ? docs.map((d) => `<tr><td>${esc(d.name)}</td><td class="text-end">${d.words}</td><td class="text-end">${d.chunks}</td><td class="mono">${esc(d.sha256.slice(0, 12))}</td></tr>`).join("")
@@ -161,29 +294,28 @@ $("ask-form").onsubmit = async (ev) => {
     $("answer").innerHTML = `
       <div class="card mb-3"><div class="card-body">
         <div class="d-flex justify-content-between mb-2">
-          <h2 class="h6 mb-0">${a.abstained ? badge(false, "", "Abstención") : badge(true, "Respondida", "")}</h2>
+          <h2 class="h6 mb-0">${statusTag(a.abstained)}</h2>
           <span>Confianza <strong>${a.confidence}</strong></span>
         </div>
         <p class="mb-2">${esc(a.answer)}</p>
         ${a.reason ? `<p class="small text-muted">Motivo: ${esc(a.reason)}</p>` : ""}
         ${cites ? `<h3 class="h6 mt-3">Citas</h3><ul class="list-unstyled mb-0">${cites}</ul>` : ""}
       </div></div>
-      <div class="card"><div class="card-body">
-        <h3 class="h6">Recuperación (top-k)</h3>
+      <div class="card"><div class="card-header">Recuperación (top-k)</div><div class="card-body">
         <table class="table table-sm small mb-0"><thead><tr><th>Chunk</th><th>Score</th><th>Cobertura</th><th>Términos</th></tr></thead><tbody>${hits}</tbody></table>
       </div></div>`;
   } catch (e) { $("answer").innerHTML = `<div class="alert alert-danger">${esc(e.message)}</div>`; }
 };
 
 function renderEval(rep) {
-  if (!rep) { $("eval-body").innerHTML = `<tr><td colspan="7" class="text-muted">Sin evaluaciones</td></tr>`; return; }
+  if (!rep) { $("eval-body").innerHTML = `<tr><td colspan="7" class="text-muted">Sin evaluaciones</td></tr>`; $("eval-metrics").innerHTML = ""; return; }
   const m = rep.metrics, k = m.k;
   const cards = [
     [`recall@${k}`, m["recall@" + k]], ["citation hit", m.citation_hit], ["keywords", m.keyword_score],
     ["abstención", m.abstention_correct], ["falsa respuesta", m.false_answer_rate], ["pass rate", m.pass_rate],
   ];
-  $("eval-metrics").innerHTML = cards.map(([n, v]) => `<div class="col-6 col-md-2"><div class="card"><div class="card-body py-2"><div class="small text-muted">${n}</div><div class="metric">${pct(v)}</div></div></div></div>`).join("");
-  $("eval-body").innerHTML = rep.cases.map((c) => `<tr><td>${esc(c.id)}</td><td class="q">${esc(c.question)}</td><td>${badge(c.passed, "OK", "FALLA")}</td><td>${c.abstained ? "sí" : "no"}</td><td>${c.confidence}</td><td>${esc(c.expected_doc || "—")}</td><td>${esc(c.cited_docs.join(", ") || "—")}</td></tr>`).join("");
+  $("eval-metrics").innerHTML = cards.map(([n, v]) => `<div class="col-6 col-md-2"><div class="card kpi"><div class="card-body py-2"><div class="label">${n}</div><div class="value" style="font-size:1.45rem">${pct(v)}</div></div></div></div>`).join("");
+  $("eval-body").innerHTML = rep.cases.map((c) => `<tr><td>${esc(c.id)}</td><td class="q">${esc(c.question)}</td><td>${passTag(c.passed)}</td><td>${c.abstained ? "sí" : "no"}</td><td>${c.confidence}</td><td>${esc(c.expected_doc || "—")}</td><td>${esc(c.cited_docs.join(", ") || "—")}</td></tr>`).join("");
 }
 
 async function loadEval() {
@@ -204,16 +336,12 @@ $("btn-eval").onclick = async () => {
 async function loadHistory() {
   const rows = await api("/api/history");
   $("history-body").innerHTML = rows.length
-    ? rows.map((r) => `<tr><td>${r.id}</td><td>${esc(r.ts)}</td><td class="q">${esc(r.question)}</td><td>${badge(!r.abstained, "Respondida", "Abstención")}</td><td>${r.confidence}</td><td>${esc(r.top_doc || "—")}</td><td class="text-end">${r.latency_ms}</td></tr>`).join("")
+    ? rows.map((r) => `<tr><td>${r.id}</td><td>${esc(r.ts)}</td><td class="q">${esc(r.question)}</td><td>${statusTag(r.abstained)}</td><td>${r.confidence}</td><td>${esc(r.top_doc || "—")}</td><td class="text-end">${r.latency_ms}</td></tr>`).join("")
     : `<tr><td colspan="7" class="text-muted">Sin consultas</td></tr>`;
 }
 $("btn-history").onclick = loadHistory;
-document.querySelectorAll('[data-bs-target="#t-history"]').forEach((b) => b.addEventListener("shown.bs.tab", loadHistory));
-document.querySelectorAll('[data-bs-target="#t-eval"]').forEach((b) => b.addEventListener("shown.bs.tab", loadEval));
 
 loadStatus().catch(() => {});
-loadEval().catch(() => {});
-loadHistory().catch(() => {});
 </script>
 </body>
 </html>

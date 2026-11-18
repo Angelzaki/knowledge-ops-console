@@ -70,8 +70,19 @@ def status(settings: Settings) -> dict[str, Any]:
         out["last_ingest"] = store.last_ingest()
         ev = store.latest_eval()
         out["last_eval"] = {"ts": ev["ts"], "k": ev["k"], "metrics": ev["metrics"]} if ev else None
+        out["activity"] = store.activity()
+        qs = store.query_stats()
     else:
         out["counts"] = {"ingest_runs": 0, "queries": 0, "eval_runs": 0}
         out["last_ingest"] = None
         out["last_eval"] = None
+        out["activity"] = []
+        qs = {"asks": 0, "abstentions": 0, "avg_latency_ms": 0.0}
+    idx = out["index"]
+    out["kpis"] = {
+        "docs_indexed": idx["docs"] if idx else 0,
+        "chunks_indexed": idx["chunks"] if idx else 0,
+        "gold_accuracy": out["last_eval"]["metrics"]["pass_rate"] if out["last_eval"] else None,
+        **qs,
+    }
     return out
