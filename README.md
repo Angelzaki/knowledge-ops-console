@@ -1,10 +1,15 @@
+<div align="center">
+
 # knowledge-ops-console
 
-Ingesta, índice léxico, respuestas con citas y evaluación contra un gold set en una consola local.
+**Ingesta, ask con citas y gold eval** · Angel Salazar Lima · CIP 404730
 
 ![CI](https://github.com/Angelzaki/knowledge-ops-console/actions/workflows/ci.yml/badge.svg)
 
-Autor: **Angel Salazar Lima** · CIP 404730
+<br/>
+<img src="docs/diagram.jpg" alt="Problema → Solución → Resultado" width="100%"/>
+
+</div>
 
 ---
 
