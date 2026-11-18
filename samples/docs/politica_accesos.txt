@@ -1,0 +1,22 @@
+POL-SEG-003 Política de accesos y contraseñas
+
+1. Objetivo
+Definir las reglas para otorgar, usar y revocar accesos a los sistemas internos, de modo que cada persona acceda solo a la información que necesita para su trabajo.
+
+2. Requisitos de contraseña
+Las contraseñas deben tener un mínimo de 12 caracteres e incluir mayúsculas, minúsculas, números y un símbolo. Se cambian cada 90 días y no pueden repetir ninguna de las últimas 5 contraseñas. Está prohibido compartir contraseñas por correo, chat o papel.
+
+3. Autenticación multifactor
+El segundo factor de autenticación es obligatorio para la VPN, el correo corporativo, el panel de administración y cualquier sistema que contenga datos de clientes. Se recomienda una aplicación autenticadora; los mensajes SMS solo se aceptan como respaldo temporal.
+
+4. Solicitud de nuevos accesos
+Todo acceso nuevo se solicita mediante ticket en la mesa de ayuda de TI, con la aprobación del jefe directo. Los accesos a sistemas con datos personales requieren además la aprobación del Oficial de Seguridad de la Información. TI atiende las solicitudes aprobadas en un máximo de 2 días hábiles.
+
+5. Baja de accesos
+Cuando una persona deja la empresa, Recursos Humanos notifica a TI el mismo día de la salida. TI desactiva todas las cuentas dentro de las 4 horas siguientes a la notificación y recupera el equipo asignado. Las cuentas desactivadas se conservan 30 días antes de su eliminación definitiva.
+
+6. Revisión periódica
+Cada trimestre los jefes de área revisan la lista de accesos de su equipo y retiran los que ya no son necesarios. TI conserva la evidencia de la revisión por 2 años para auditorías.
+
+7. Bloqueo de cuenta
+Después de 5 intentos fallidos de inicio de sesión la cuenta se bloquea durante 30 minutos. Para el desbloqueo inmediato, la persona debe validar su identidad con la mesa de ayuda.

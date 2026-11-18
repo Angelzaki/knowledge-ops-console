@@ -1,0 +1,22 @@
+SOP-OPS-007 Gestión de incidentes de producción
+
+1. Clasificación por severidad
+Severidad 1: caída total del servicio o pérdida de datos de clientes. Severidad 2: degradación grave de una función crítica, como pagos o inicio de sesión. Severidad 3: falla parcial con alternativa disponible. Severidad 4: defecto menor sin impacto en la operación.
+
+2. Tiempos de respuesta
+Para severidad 1 el equipo de guardia debe responder en 15 minutos y mantener actualizaciones cada 30 minutos. Para severidad 2 la respuesta es de 1 hora con actualizaciones cada 2 horas. Las severidades 3 y 4 se atienden dentro del siguiente día hábil.
+
+3. Rol de comandante del incidente
+Todo incidente de severidad 1 o 2 tiene un comandante de incidente designado por el ingeniero de guardia. El comandante coordina al equipo, decide la escalación y es la única persona que comunica el estado a la gerencia. Los demás integrantes se concentran en el diagnóstico y la mitigación.
+
+4. Comunicación a clientes
+Para severidad 1 la página de estado se actualiza dentro de los primeros 20 minutos. Soporte envía un correo a los clientes afectados cuando el incidente supera 1 hora. El mensaje debe indicar el impacto, la hora de inicio y la próxima actualización, sin especular sobre la causa.
+
+5. Escalamiento
+Si no hay mitigación después de 45 minutos en un incidente de severidad 1, el comandante escala al director de Tecnología. Si hay posible afectación de datos personales, se notifica de inmediato al Oficial de Seguridad de la Información.
+
+6. Postmortem
+Todo incidente de severidad 1 o 2 requiere un postmortem sin culpables en un plazo máximo de 5 días hábiles después de su cierre. El documento incluye la línea de tiempo, la causa raíz, el impacto y las acciones correctivas con responsable y fecha.
+
+7. Cierre del incidente
+El incidente se cierra cuando el servicio está estable durante 60 minutos continuos y el comandante lo confirma en el canal de incidentes. El ticket se actualiza con la duración total y el enlace al postmortem.

@@ -1,0 +1,22 @@
+SOP-FIN-014 Procedimiento de reembolsos a clientes
+
+1. Alcance
+Este procedimiento aplica a todos los reembolsos solicitados por clientes de los planes Esencial, Profesional y Corporativo. No cubre contracargos iniciados desde el banco emisor, que se gestionan con el SOP-FIN-021.
+
+2. Plazo para solicitar el reembolso
+El cliente tiene 15 días calendario desde la fecha de cobro para solicitar el reembolso total de su suscripción. Pasado ese plazo solo procede un reembolso parcial por servicio no prestado, con aprobación de Finanzas.
+
+3. Canal y datos requeridos
+La solicitud se registra en el portal de soporte con el número de factura, el correo del titular y el motivo del reembolso. Soporte nivel 1 verifica que la factura exista y que el pago figure como conciliado antes de continuar.
+
+4. Aprobación por monto
+Los reembolsos de hasta S/ 500 los aprueba el analista de soporte nivel 2. Los reembolsos entre S/ 500 y S/ 5,000 requieren la aprobación del jefe de Operaciones. Los montos superiores a S/ 5,000 requieren doble aprobación de Operaciones y Finanzas.
+
+5. Tiempo de acreditación
+Una vez aprobado, Finanzas ejecuta la devolución por el mismo medio de pago utilizado. La acreditación demora hasta 10 días hábiles para tarjeta de crédito y hasta 5 días hábiles para transferencia bancaria. El cliente recibe un correo de confirmación con el código de operación.
+
+6. Casos que no se reembolsan
+No se reembolsan los servicios de implementación ya entregados, las horas de consultoría consumidas ni las licencias adicionales activadas durante los últimos 30 días del contrato. Estos casos se comunican al cliente con la cláusula contractual correspondiente.
+
+7. Registro y auditoría
+Todo reembolso queda registrado en el sistema de tickets con su aprobador y el comprobante de devolución. Finanzas revisa una muestra mensual del 10% de los reembolsos para verificar el cumplimiento de este procedimiento.

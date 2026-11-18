@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knowledge-ops-console"
+version = "0.1.0"
+description = "Consola local de operaciones de conocimiento: ingesta, índice léxico, respuestas con citas y evaluación"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Angel Salazar" }]
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn>=0.27",
+  "pytest>=8.0",
+]
+
+[project.optional-dependencies]
+dev = ["httpx>=0.27"]
+
+[project.scripts]
+knowledge-ops = "knowledge_ops.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+knowledge_ops = ["templates/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

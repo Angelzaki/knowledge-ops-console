@@ -1,0 +1,13 @@
+{"id":"q01","question":"¿Cuántos días tiene un cliente para pedir el reembolso total?","expected_doc":"sop_reembolsos.txt","expected_keywords":["15 días","reembolso total"]}
+{"id":"q02","question":"¿Quién aprueba un reembolso de S/ 3,000?","expected_doc":"sop_reembolsos.txt","expected_keywords":["jefe de Operaciones"]}
+{"id":"q03","question":"¿Cuánto demora la acreditación del reembolso en tarjeta de crédito?","expected_doc":"sop_reembolsos.txt","expected_keywords":["10 días hábiles"]}
+{"id":"q04","question":"¿Cuál es la longitud mínima de una contraseña?","expected_doc":"politica_accesos.txt","expected_keywords":["12 caracteres"]}
+{"id":"q05","question":"¿Cuánto tiempo se bloquea la cuenta tras intentos fallidos de inicio de sesión?","expected_doc":"politica_accesos.txt","expected_keywords":["30 minutos","5 intentos"]}
+{"id":"q06","question":"¿En cuánto tiempo debe TI desactivar las cuentas de quien deja la empresa?","expected_doc":"politica_accesos.txt","expected_keywords":["4 horas"]}
+{"id":"q07","question":"¿En cuánto tiempo se responde un incidente de severidad 1?","expected_doc":"sop_incidentes.txt","expected_keywords":["15 minutos"]}
+{"id":"q08","question":"¿En qué plazo se debe hacer el postmortem de un incidente?","expected_doc":"sop_incidentes.txt","expected_keywords":["5 días hábiles","postmortem"]}
+{"id":"q09","question":"¿Cuántos días de trabajo remoto se permiten por semana?","expected_doc":"politica_vacaciones_remoto.txt","expected_keywords":["3 días por semana"]}
+{"id":"q10","question":"¿Cuántos días de vacaciones corresponden por año de servicio?","expected_doc":"politica_vacaciones_remoto.txt","expected_keywords":["30 días calendario"]}
+{"id":"q11","question":"¿Cuánto es el bono mensual de internet para trabajo remoto?","expected_doc":"politica_vacaciones_remoto.txt","expected_keywords":["S/ 80"]}
+{"id":"q12","question":"¿Cuál es el precio actual del bitcoin en dólares?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
+{"id":"q13","question":"¿Quién ganó el mundial de fútbol de 2018?","expected_doc":null,"expected_keywords":[],"should_abstain":true}
